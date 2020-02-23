@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-
+using Swashbuckle.AspNetCore.Swagger;
 namespace NorhwindAPI
 {
     public class Startup
@@ -25,6 +25,10 @@ namespace NorhwindAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Northwind API", Version = "v1" });
+            });
             services.AddDbContext<NorthwindAPIDBContext>(options =>
             {
                 options.UseSqlServer("server=.;database=Northwind;trusted_connection=true;");
@@ -35,6 +39,11 @@ namespace NorhwindAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Northwind API v1.0");
+            });
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
