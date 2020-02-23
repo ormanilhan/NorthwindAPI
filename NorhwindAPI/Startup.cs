@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,7 +29,13 @@ namespace NorhwindAPI
             {
                 options.UseSqlServer("server=.;database=Northwind;trusted_connection=true;");
             });
-            services.AddMvc();
+            services.AddScoped<RAML.WebApiExplorer.ApiExplorerDataFilter>();
+            services.AddMvc(options =>
+                {
+                    options.Filters.AddService(typeof(RAML.WebApiExplorer.ApiExplorerDataFilter));
+                    options.Conventions.Add(new RAML.WebApiExplorer.ApiExplorerVisibilityEnabledConvention());
+                    options.Conventions.Add(new RAML.WebApiExplorer.ApiExplorerVisibilityDisabledConvention(typeof(RAML.WebApiExplorer.RamlController)));
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
